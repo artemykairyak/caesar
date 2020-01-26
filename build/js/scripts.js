@@ -28,7 +28,7 @@ window.onload = function () {
   });
 
   function checkKey(key) {
-    if (key.match(/^[1-9]+$/)) {
+    if (key.match(/^[0-9]+$/)) {
       return true;
     }
 
