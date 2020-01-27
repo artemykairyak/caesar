@@ -15,41 +15,29 @@ window.onload = function () {
       encryptedForm = document.querySelector('.encrypt'),
       decryptedForm = document.querySelector('.decrypt'),
       error = document.querySelector('.error'),
-      rusAlphabet = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЭЮЯ'.toLowerCase(),
-      engAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.toLowerCase();
+      rusAlphabet = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ'.toLowerCase(),
+      engAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.toLowerCase(),
+      textMask = '',
+      rusRegExp = /^[а-яё0-9\/\\\-\.\,\?\!\)\(\ :\;\'\@\#\№\$\%\^\*\_\&+\n]+$/,
+      engRexExp = /^[a-z0-9\/\\\-\,\.\?\!\)\(\ :\;\'\@\#\№\$\%\^\*\_\&+\n]+$/,
+      maskRegExp = /^[0-9\/\\\-\.\,\?!\)\(\ :\;\'\@\#\№\$\%\^\*\_\&+\n]+$/;
+  ;
   encBtn.addEventListener('click', function () {
-    if (!checkLang(initText.value) || !checkKey(key.value)) {
+    if (!checkLang(initText.value.toLowerCase()) || !checkKey(key.value)) {
       error.classList.remove('hidden');
     } else {
-      encrypt(initText.value);
+      textMask = createMask(initText.value);
+      encrypt(initText.value.toLowerCase());
       resText.removeAttribute('disabled');
       resetBtn.classList.remove('nonvisible');
     }
   });
-
-  function checkKey(key) {
-    if (key.match(/^[0-9]+$/)) {
-      return true;
-    }
-
-    return false;
-  }
-
-  function checkLang(text) {
-    if (text.match(/^[а-яё\-\.\?\!\)\(\ :]+$/)) {
-      return 'rus';
-    } else if (text.match(/^[a-z\-\.\?\!\)\(\ :]+$/)) {
-      return 'eng';
-    } else {
-      return undefined;
-    }
-  }
-
   decBtn.addEventListener('click', function () {
-    if (!checkLang(encryptedText.value) || !checkKey(decKey.value)) {
+    if (!checkLang(encryptedText.value.toLowerCase()) || !checkKey(decKey.value)) {
       error.classList.remove('hidden');
     } else {
-      decrypt(encryptedText.value);
+      textMask = createMask(initText.value);
+      decrypt(encryptedText.value.toLowerCase());
       resDecText.removeAttribute('disabled');
       resetDecBtn.classList.remove('nonvisible');
     }
@@ -82,6 +70,66 @@ window.onload = function () {
       error.classList.add('hidden');
     });
   });
+  [resText, resDecText].forEach(function (item) {
+    item.addEventListener('focus', function () {
+      this.select();
+    });
+  });
+  resText.addEventListener('focus', function () {
+    this.select();
+  });
+
+  function createMask(text) {
+    textMask = '';
+    var mask = '';
+
+    for (var i = 0; i < text.length; i++) {
+      if (text[i].toUpperCase() === text[i] && !text[i].match(maskRegExp)) {
+        mask += '1';
+      } else if (text[i] === ' ') {
+        mask += ' ';
+      } else {
+        mask += '0';
+      }
+    }
+
+    return mask;
+  } //creating validation
+
+
+  function createFromMask(text, mask) {
+    var resText = '';
+
+    for (var i = 0; i < text.length; i++) {
+      if (mask.substr(i, 1) === '1') {
+        resText += text[i].toUpperCase();
+      } else {
+        resText += text[i];
+      }
+    }
+
+    return resText;
+  } //key validation
+
+
+  function checkKey(key) {
+    if (key.match(/^[0-9]+$/)) {
+      return true;
+    }
+
+    return false;
+  } //text language detection
+
+
+  function checkLang(text) {
+    if (text.match(rusRegExp)) {
+      return 'rus';
+    } else if (text.match(engRexExp)) {
+      return 'eng';
+    } else {
+      return undefined;
+    }
+  }
 
   function reset(type) {
     if (type === 'enc') {
@@ -96,8 +144,9 @@ window.onload = function () {
       decKey.value = '';
       resDecText.setAttribute('disabled', true);
       resetDecBtn.classList.add('nonvisible');
+      textMask = '';
     }
-  } //функция, сдвигающая алфавит на количество букв shift
+  } //shifting alphabet
 
 
   function shiftAlphabet(shift, text) {
@@ -111,24 +160,26 @@ window.onload = function () {
       return;
     }
 
-    var shiftedAlphabet = ''; //новый алфавит 
+    var fixedShift = shift % alphabet.length;
+    var shiftedAlphabet = '';
 
     for (var i = 0; i < alphabet.length; i++) {
       //Текущая буква со сдвигом, если выходим за рамки длины алфавита - берем с начала алфавита
-      var currentLetter = alphabet[i + shift] === undefined ? alphabet[i + shift - alphabet.length] : alphabet[i + shift];
+      var currentLetter = alphabet[i + fixedShift] === undefined ? alphabet[i + fixedShift - alphabet.length] : alphabet[i + fixedShift];
       shiftedAlphabet = shiftedAlphabet.concat(currentLetter);
     }
 
     return shiftedAlphabet;
-  }
+  } //text encryption
+
 
   function encrypt(text) {
     var shiftedAlphabet = shiftAlphabet(parseInt(key.value), text);
     var encryptedMessage = '';
 
     for (var i = 0; i < text.length; i++) {
-      if (text[i] == ' ') {
-        encryptedMessage = encryptedMessage.concat(' ');
+      if (text[i].match(maskRegExp)) {
+        encryptedMessage = encryptedMessage.concat(text[i]);
         continue;
       }
 
@@ -146,16 +197,17 @@ window.onload = function () {
       encryptedMessage = encryptedMessage.concat(shiftedAlphabet[indexOfLetter]);
     }
 
-    resText.value = encryptedMessage.toLowerCase();
-  }
+    resText.value = createFromMask(encryptedMessage, textMask);
+  } //text decryption
+
 
   function decrypt(text) {
     var shiftedAlphabet = shiftAlphabet(parseInt(decKey.value), text);
     var decryptedMessage = '';
 
     for (var i = 0; i < text.length; i++) {
-      if (text[i] == ' ') {
-        decryptedMessage = decryptedMessage.concat(' ');
+      if (text[i].match(maskRegExp)) {
+        decryptedMessage = decryptedMessage.concat(text[i]);
         continue;
       }
 
@@ -171,6 +223,6 @@ window.onload = function () {
       }
     }
 
-    resDecText.value = decryptedMessage.toLowerCase();
+    resDecText.value = createFromMask(decryptedMessage, textMask);
   }
 };
