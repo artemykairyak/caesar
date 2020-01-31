@@ -13,6 +13,45 @@ html {
     transform: translate(-50%, -50%);
     background: #B2EBF2;
     box-shadow: 7px 7px 0px 0px #80DEEA;
+
+    &-decrypt {
+        background: #B3E5FC;
+        box-shadow: 7px 7px 0px 0px #81D4FA;
+
+        .toggle-btn {
+            background: #B3E5FC;
+            color: #0277BD;
+
+            &:hover {
+                color: #29B6F6;
+            }
+        }
+
+        .title-text {
+            color: #29B6F6;
+        }
+
+        .input {
+            &:focus {
+                box-shadow: 7px 7px 0px 0px #81D4FA;
+                border-top: 3px solid #81D4FA;
+                border-left: 3px solid #81D4FA;
+            }
+        }
+
+        .btn {
+            background: #81D4FA;
+            color: #0277BD;
+
+            &:hover {
+                background: darken(#81D4FA, 10%);
+                color: #B3E5FC;
+                box-shadow: 7px 7px 0px 0px #81D4FA;
+            }
+        }
+    }
+
+
 }
 
 * {
@@ -33,6 +72,7 @@ textarea {
     -webkit-appearance: none;
     border: none;
     resize: none;
+    font-size: 14px;
 
     &:focus {
         outline: none;
@@ -50,12 +90,12 @@ textarea {
     transform-style: preserve-3d;
     padding: 10% 10%;
     backface-visibility: hidden;
-	
-	&:hover {
-		.title-text {
-			opacity: 1;
-		}
-	}
+
+    &:hover {
+        .title-text {
+            opacity: 1;
+        }
+    }
 }
 
 .decrypt {
@@ -145,10 +185,11 @@ textarea {
     position: absolute;
     top: 2%;
     left: 2%;
-    font-size: 24px;
+    font-size: 42px;
     text-transform: uppercase;
     color: #4db6ac;
-    opacity: 0.6;
+    opacity: 0.4;
+    font-weight: 300;
 }
 
 .reset-btn,
@@ -197,5 +238,53 @@ textarea {
 
     100% {
         opacity: 1;
+    }
+}
+
+@media (max-width: 1400px) {
+    .container {
+        width: 65%;
+    }
+}
+
+@media (max-width: 1000px) {
+    .container {
+        width: 85%;
+    }
+}
+
+@media (max-width: 700px) {
+
+    html,
+    input,
+    button,
+    textarea {
+        font-size: 12px;
+    }
+
+    .container {
+        width: 100%;
+        margin-right: 7px;
+    }
+
+    .title-text {
+        font-size: 32px;
+        top: 3%;
+    }
+
+    .encrypt,
+    .decrypt {
+        padding: 15% 8% 8%;
+    }
+}
+
+@media (max-width: 400px) {
+    .title-text {
+        font-size: 28px;
+        top: 2%;
+    }
+
+    .btn {
+        width: 100%;
     }
 }

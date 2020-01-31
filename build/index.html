@@ -1,40 +1,44 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Ceasar Cipher</title>
-	<link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="css/main.css" type="text/css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Ceasar Cipher</title>
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css" type="text/css">
 </head>
+
 <body>
-	<div class="container">
-		<button class="toggle-btn" data-state="enc">Расшифровать</button>
-		<div class="error hidden">Форма содержит ошибки</div>
-		<div class="rotate">
-			<div class="encrypt">
-				<span class="title-text">Зашифровать</span>
-				<textarea class="initial-text input" placeholder="Введите текст"></textarea>
-				<input type="text" class="key input" placeholder="Введите ключ">
-				<div class="buttons">
-					<button class="enc-btn btn">Зашифровать</button>
-				</div>
-				<textarea class="result-text input" disabled></textarea>
-				<button class="reset-btn btn nonvisible">Сбросить</button>
-			</div>
-			<div class="decrypt hidden">
-				<span class="title-text">Расшифровать</span>
-				<textarea class="encrypted-text input" placeholder="Введите зашифрованный текст"></textarea>
-				<input type="text" class="dec-key input" placeholder="Введите ключ">
-				<div class="buttons">
-					<button class="dec-btn btn">Расшифровать</button>
-				</div>
-				<textarea class="result-dec-text input" disabled></textarea>
-				<button class="reset-dec-btn btn nonvisible">Сбросить</button>
-			</div>
-		</div>
-	</div>
-	<script src="js/scripts.js" type="text/javascript"></script>
+    <div class="container">
+        <button class="toggle-btn" data-state="enc">Расшифровать</button>
+        <div class="error hidden">Форма содержит ошибки</div>
+        <div class="rotate">
+            <div class="encrypt">
+                <span class="title-text">Зашифровать</span>
+                <textarea class="initial-text input" placeholder="Введите текст"></textarea>
+                <input type="text" class="key input" placeholder="Введите ключ">
+                <div class="buttons">
+                    <button class="enc-btn btn">Зашифровать</button>
+                </div>
+                <textarea class="result-text input" disabled></textarea>
+                <button class="reset-btn btn nonvisible">Сбросить</button>
+            </div>
+            <div class="decrypt hidden">
+                <span class="title-text">Расшифровать</span>
+                <textarea class="encrypted-text input" placeholder="Введите зашифрованный текст"></textarea>
+                <input type="text" class="dec-key input" placeholder="Введите ключ">
+                <div class="buttons">
+                    <button class="dec-btn btn">Расшифровать</button>
+                </div>
+                <textarea class="result-dec-text input" disabled></textarea>
+                <button class="reset-dec-btn btn nonvisible">Сбросить</button>
+            </div>
+        </div>
+    </div>
+    <script src="js/scripts.js" type="text/javascript"></script>
 </body>
+
 </html>

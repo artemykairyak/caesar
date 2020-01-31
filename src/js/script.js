@@ -1,4 +1,7 @@
 window.onload = function() {
+
+    //VARIABLES
+
     let encBtn = document.querySelector('.enc-btn'),
         decBtn = document.querySelector('.dec-btn'),
         resetBtn = document.querySelector('.reset-btn'),
@@ -13,12 +16,15 @@ window.onload = function() {
         encryptedForm = document.querySelector('.encrypt'),
         decryptedForm = document.querySelector('.decrypt'),
         error = document.querySelector('.error'),
+        container = document.querySelector('.container'),
         rusAlphabet = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ'.toLowerCase(),
         engAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.toLowerCase(),
         textMask = '',
         rusRegExp = /^[а-яё0-9\/\\\-\.\,\?\!\)\(\ :\;\'\@\#\№\$\%\^\*\_\&+\n]+$/,
         engRexExp = /^[a-z0-9\/\\\-\,\.\?\!\)\(\ :\;\'\@\#\№\$\%\^\*\_\&+\n]+$/,
-        maskRegExp = /^[0-9\/\\\-\.\,\?!\)\(\ :\;\'\@\#\№\$\%\^\*\_\&+\n]+$/;;
+        maskRegExp = /^[0-9\/\\\-\.\,\?!\)\(\ :\;\'\@\#\№\$\%\^\*\_\&+\n]+$/;
+
+    //EVENT LISTENERS
 
     encBtn.addEventListener('click', function() {
         if (!checkLang(initText.value.toLowerCase()) || !checkKey(key.value)) {
@@ -35,7 +41,7 @@ window.onload = function() {
         if (!checkLang(encryptedText.value.toLowerCase()) || !checkKey(decKey.value)) {
             error.classList.remove('hidden');
         } else {
-            textMask = createMask(initText.value);
+            textMask = createMask(encryptedText.value);
             decrypt(encryptedText.value.toLowerCase());
             resDecText.removeAttribute('disabled');
             resetDecBtn.classList.remove('nonvisible');
@@ -50,12 +56,14 @@ window.onload = function() {
             decryptedForm.classList.remove('hidden');
             this.setAttribute('data-state', 'dec');
             this.innerHTML = 'Зашифровать';
+            container.classList.add('container-decrypt');
         } else {
             document.querySelector('.rotate').classList.remove('rotated');
             encryptedForm.classList.remove('hidden');
             decryptedForm.classList.add('hidden');
             this.setAttribute('data-state', 'enc');
             this.innerHTML = 'Расшифровать';
+            container.classList.remove('container-decrypt');
         }
     });
 
@@ -65,6 +73,14 @@ window.onload = function() {
 
     resetDecBtn.addEventListener('click', function() {
         reset('dec');
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.code == 'Enter' && document.activeElement !== initText && document.activeElement !== encryptedText) {
+            toggleBtn.getAttribute('data-state') === 'enc' ?
+                encBtn.click() :
+                decBtn.click();
+        }
     });
 
     [initText, key, encryptedText, decKey].forEach(item => {
@@ -83,9 +99,13 @@ window.onload = function() {
         this.select();
     });
 
+    //FUNCTIONS
+
+    //creating the mask to save the text case
     function createMask(text) {
         textMask = '';
         let mask = '';
+
         for (let i = 0; i < text.length; i++) {
             if (text[i].toUpperCase() === text[i] &&
                 !text[i].match(maskRegExp)) {
@@ -96,12 +116,14 @@ window.onload = function() {
                 mask += '0';
             }
         }
+
         return mask;
     }
 
-    //creating validation
+    //applying a mask to text to restore text case
     function createFromMask(text, mask) {
         let resText = '';
+
         for (let i = 0; i < text.length; i++) {
             if (mask.substr(i, 1) === '1') {
                 resText += text[i].toUpperCase();
@@ -117,6 +139,7 @@ window.onload = function() {
         if (key.match(/^[0-9]+$/)) {
             return true;
         }
+
         return false;
     }
 
@@ -131,6 +154,7 @@ window.onload = function() {
         }
     }
 
+    //reset form
     function reset(type) {
         if (type === 'enc') {
             initText.value = '';
@@ -148,22 +172,22 @@ window.onload = function() {
         }
     }
 
-    //shifting alphabet
+    //creating shifting alphabet
     function shiftAlphabet(shift, text) {
         let alphabet = '';
-        if (checkLang(text) === 'rus') {
 
+        if (checkLang(text) === 'rus') {
             alphabet = rusAlphabet;
         } else if (checkLang(text) === 'eng') {
-
             alphabet = engAlphabet;
         } else {
             return;
         }
+
         let fixedShift = shift % alphabet.length;
-        let shiftedAlphabet = ''; 
+        let shiftedAlphabet = '';
+
         for (var i = 0; i < alphabet.length; i++) {
-            //Текущая буква со сдвигом, если выходим за рамки длины алфавита - берем с начала алфавита
             let currentLetter = (alphabet[i + fixedShift] === undefined) ?
                 (alphabet[i + fixedShift - alphabet.length]) :
                 (alphabet[i + fixedShift]);
@@ -177,12 +201,15 @@ window.onload = function() {
     function encrypt(text) {
         let shiftedAlphabet = shiftAlphabet(parseInt(key.value), text);
         let encryptedMessage = '';
+
         for (let i = 0; i < text.length; i++) {
             if (text[i].match(maskRegExp)) {
                 encryptedMessage = encryptedMessage.concat(text[i]);
                 continue
             };
+
             let indexOfLetter = '';
+
             if (checkLang(text) === 'rus') {
                 indexOfLetter = rusAlphabet.indexOf(text[i].toLowerCase());
 
@@ -200,6 +227,7 @@ window.onload = function() {
     function decrypt(text) {
         let shiftedAlphabet = shiftAlphabet(parseInt(decKey.value), text);
         let decryptedMessage = '';
+
         for (let i = 0; i < text.length; i++) {
             if (text[i].match(maskRegExp)) {
                 decryptedMessage = decryptedMessage.concat(text[i]);
@@ -217,7 +245,6 @@ window.onload = function() {
                 return;
             }
         }
-
         resDecText.value = createFromMask(decryptedMessage, textMask);
     }
 }
